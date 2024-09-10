@@ -73,7 +73,7 @@ def plot(name_list, name_list_eng, plot_data, choice, output_path):
 ##### Main part of the code #####
 
 # Obtain the paths for loading and saving files
-with open('/home/ubuntu/PCI-person/config/directory.json', 'r') as f:
+with open('/home/ubuntu/PCI-Personnel/config/directory.json', 'r') as f:
     directory = json.load(f)
 
 namelist_path = directory["namelist_path"]
