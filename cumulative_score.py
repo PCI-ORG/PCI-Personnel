@@ -94,6 +94,7 @@ start_date = '20010101'
 end_date = today
 time_range = pd.date_range(start_date, end_date)
 
+'''
 
 # Chose 1 to sum over all scores if the same article appears more than once on the same day. Choose 0 to stop multiple counting
 double_count = 1 
@@ -114,7 +115,7 @@ for person_id in range(1,len(name_list)):
 
     s3_key = directory["score_s3_key"].format(LLM_model = LLM_model, person = person)
     s3.upload_file(output_path, s3_bucket, s3_key)
-
+'''
 
 # Output csv file for the resulting indices of different people
 
@@ -141,4 +142,12 @@ for person_id in range (1,len(name_list)):
 
 df_grand = df_grand.astype({'date': 'string'})
 df_grand = df_grand.loc[:, ~df_grand.columns.duplicated()]
+
+# Specify the range and choice for ploting
+range_start = '20070101'
+range_end = today
+
+df_grand = df_grand.loc[(df_grand['date'] >=range_start) & (df_grand['date'] <=range_end)]
+df_grand['date'] = df_grand['date'].apply(lambda x: pd.to_datetime(x, format='%Y%m%d'))
+
 df_grand.to_csv('/home/ubuntu/PCI-Personnel/results/PCI-personnel.csv', index = False)
