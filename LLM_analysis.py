@@ -24,7 +24,7 @@ from langchain_core.pydantic_v1 import BaseModel, Field
 def prompt_setting(LLM_model, person1, person2, news_title, news_body):
 
     # Reading the rating question, explanation question, and prompt
-    config_file = f'/home/ubuntu/PCI-person/config/LLM-{LLM_model}.json'
+    config_file = f'/home/ubuntu/PCI-Personnel/config/LLM-{LLM_model}.json'
 
     # Check if the config json exists
     if not os.path.exists(config_file):
@@ -66,7 +66,7 @@ today = datetime.datetime.now()
 today = today.strftime('%Y%m%d') 
 
 # Obtain the paths for loading and saving files
-with open('/home/ubuntu/PCI-person/config/directory.json', 'r') as f:
+with open('/home/ubuntu/PCI-Personnel/config/directory.json', 'r') as f:
     directory = json.load(f)
 
 namelist_path = directory["namelist_path"]

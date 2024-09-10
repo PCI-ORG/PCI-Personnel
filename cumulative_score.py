@@ -79,7 +79,7 @@ today = today.strftime('%Y%m%d')
 LLM_model = 'eng-v1'
 
 # Obtain the paths for loading and saving files
-with open('/home/ubuntu/PCI-person/config/directory.json', 'r') as f:
+with open('/home/ubuntu/PCI-Personnel/config/directory.json', 'r') as f:
     directory = json.load(f)
 
 namelist_path = directory["namelist_path"]
@@ -94,7 +94,6 @@ start_date = '20010101'
 end_date = today
 time_range = pd.date_range(start_date, end_date)
 
-'''
 
 # Chose 1 to sum over all scores if the same article appears more than once on the same day. Choose 0 to stop multiple counting
 double_count = 1 
@@ -115,7 +114,6 @@ for person_id in range(1,len(name_list)):
 
     s3_key = directory["score_s3_key"].format(LLM_model = LLM_model, person = person)
     s3.upload_file(output_path, s3_bucket, s3_key)
-'''
 
 # Output csv file for the resulting indices of different people
 
