@@ -2,24 +2,17 @@ import pandas as pd
 import datetime
 import json
 import os
-from utils import load_namelist, data_selection
+from utils import load_namelist
 
 # For plotting offline, use plotly directly:
 import plotly as py 
 import plotly.express as px
 
 # Prepare the data for plot and obtain the plot
-def plot(name_list, name_list_eng, df_grand, range_start, range_end, choice, output_path):
+def plot(name_list, name_list_eng, plot_data, choice, output_path):
 
-    # list of people to plot
-    person_list = [f'{key}' for key in range(1, len(list(name_list.keys())))]
-
-    plot_data = df_grand.loc[(df_grand['date'] >=range_start) & (df_grand['date'] <=range_end)]
-    plot_data = pd.concat([plot_data[['date']], plot_data[person_list]],axis=1)
-    plot_data['date'] = plot_data['date'].apply(lambda x: pd.to_datetime(x, format='%Y%m%d'))
-
-
-    legend_names = {f'{key}': f'{name_list_eng[key]} ({name_list[key]})' for key in list(name_list.keys())}
+    # plot_data['date'] = plot_data['date'].apply(lambda x: pd.to_datetime(x, format='%Y%m%d'))
+    legend_names = {f'{name_list_eng[key]}': f'{name_list_eng[key]} ({name_list[key]})' for key in list(name_list.keys())}
 
     # plotly express line chart
     fig = px.line(plot_data, x="date", y=plot_data.columns, color_discrete_sequence=px.colors.qualitative.Alphabet)
@@ -77,7 +70,6 @@ def plot(name_list, name_list_eng, df_grand, range_start, range_end, choice, out
     py.offline.plot(fig, filename = output_path)
 
 
-
 ##### Main part of the code #####
 
 # Obtain the paths for loading and saving files
@@ -95,37 +87,21 @@ if len(name_list) != len(name_list_eng):
     print("Chinese and English name lists do not match. Please check")
     exit()
 
-# Choose which LLM model's result to plot. Choices now: eng-v1, chi-v1
-LLM_model = "eng-v1"
-
-# Prepare and combine data from different people
-df_grand = pd.DataFrame()
-
-for person_id in range (1,len(name_list)):
-
-    person = name_list[person_id]
-    data_path = directory["score_local_path"].format(LLM_model = LLM_model, person = person)
-
-    if not os.path.exists(data_path):
-        print(f"missing score file for {person}, check again")
-        quit()
-
-    else:
-        df_person = data_selection(dataset = data_path, keep_columns = ["date", "cum_score"])
-        df_person = df_person.rename(columns={"cum_score": f'{person_id}'})
-        df_grand = pd.concat([df_grand, df_person], axis=1)
-
-df_grand = df_grand.astype({'date': 'string'})
-df_grand = df_grand.loc[:, ~df_grand.columns.duplicated()]
-
 # Specify the range and choice for ploting
-
 range_start = '20070101'
-
 today = datetime.datetime.now() # Note AWS use UTC!
 today = today.strftime('%Y%m%d') 
 range_end = today
 
 # Choices for plot at launching: 1. All traces on, 2. All traces off
 choice = 1
-plot(name_list, name_list_eng, df_grand, range_start, range_end, choice, output_path)
+
+# Load the data set for plotting
+plot_data = '/home/ubuntu/PCI-Personnel/results/PCI-personnel.csv'
+
+if not os.path.exists(plot_data):
+    print("file does not exist")
+
+else:
+    plot_data = pd.read_csv(plot_data)
+    plot(name_list, name_list_eng, plot_data, choice, output_path)
