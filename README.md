@@ -18,7 +18,7 @@ The PCI-Personnel algorithm consists of the following five steps:
 
 5. Visualization: We plot and deploy the numerical indices for all POIs and continue to update the results as new data continues to flow in.
 
-The visualization of the results can be found [here](URL_TBD).
+The visualization of the results can be found https://pci-org.github.io/PCI-Personnel/.
 
 ## Acknowledgement
 
