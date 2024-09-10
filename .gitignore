@@ -1,0 +1,11 @@
+__pycache__
+
+/config/directory.json
+/cumulative-score
+/date-monitor
+/GPT-results
+/person-article
+/date-monitor
+
+article_query.py
+git_update.py
