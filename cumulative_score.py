@@ -75,6 +75,7 @@ today = datetime.datetime.now()
 today = today.strftime('%Y%m%d') 
 
 # Which LLM model to obtain the cumulative score?
+# Current possible choices: eng-v1, chi-v1
 LLM_model = 'eng-v1'
 
 # Obtain the paths for loading and saving files
@@ -82,14 +83,17 @@ with open('/home/ubuntu/PCI-person/config/directory.json', 'r') as f:
     directory = json.load(f)
 
 namelist_path = directory["namelist_path"]
+namelist_eng_path = directory["namelist_eng_path"]
 s3_bucket = directory["s3_bucket"]
 
 # Load the name list and LLM results 
 name_list = load_namelist(namelist_path)
+name_list_eng = load_namelist(namelist_eng_path)
 
 start_date = '20010101'
 end_date = today
 time_range = pd.date_range(start_date, end_date)
+
 
 # Chose 1 to sum over all scores if the same article appears more than once on the same day. Choose 0 to stop multiple counting
 double_count = 1 
@@ -110,3 +114,31 @@ for person_id in range(1,len(name_list)):
 
     s3_key = directory["score_s3_key"].format(LLM_model = LLM_model, person = person)
     s3.upload_file(output_path, s3_bucket, s3_key)
+
+
+# Output csv file for the resulting indices of different people
+
+if len(name_list) != len(name_list_eng):
+    print("Chinese and English name lists do not match. Please check")
+    exit()
+
+df_grand = pd.DataFrame()
+
+for person_id in range (1,len(name_list)):
+
+    person = name_list[person_id]
+    person_eng = name_list_eng[person_id]
+    data_path = directory["score_local_path"].format(LLM_model = LLM_model, person = person)
+
+    if not os.path.exists(data_path):
+        print(f"missing score file for {person_eng}, check again")
+        quit()
+
+    else:
+        df_person = data_selection(dataset = data_path, keep_columns = ["date", "cum_score"])
+        df_person = df_person.rename(columns={"cum_score": f'{person_eng}'})
+        df_grand = pd.concat([df_grand, df_person], axis=1)
+
+df_grand = df_grand.astype({'date': 'string'})
+df_grand = df_grand.loc[:, ~df_grand.columns.duplicated()]
+df_grand.to_csv('/home/ubuntu/PCI-Personnel/results/PCI-personnel.csv', index = False)
