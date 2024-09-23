@@ -16,7 +16,10 @@ def plot(name_list, name_list_eng, plot_data, range_start, range_end, choice, ou
     legend_names = {f'{name_list_eng[key]}': f'{name_list_eng[key]} ({name_list[key]})' for key in list(name_list.keys())}
 
     # plotly express line chart
-    fig = px.line(plot_data, x="date", y=plot_data.columns, range_x=[range_start,range_end], color_discrete_sequence=px.colors.qualitative.Alphabet)
+    fig = px.line(plot_data, x="date", y=plot_data.columns, color_discrete_sequence=px.colors.qualitative.Alphabet)
+    
+    # update the range of x-axis
+    fig.update_xaxes(autorange=False, range=[range_start, range_end])
 
     fig.for_each_trace(lambda t: t.update(name = legend_names[t.name],
                                         legendgroup = legend_names[t.name],
@@ -37,9 +40,9 @@ def plot(name_list, name_list_eng, plot_data, range_start, range_end, choice, ou
         legend={
             "y": 0.95,
             "title": "Xi's Personnel"},
-        xaxis_rangeslider_visible = False,
+        xaxis_rangeslider_visible = False
     )
-
+    
     # Add the "select all" and "diselect all" buttons
     fig.update_layout(dict(updatemenus=[
                         dict(
@@ -89,12 +92,12 @@ if len(name_list) != len(name_list_eng):
     exit()
 
 # Specify the range and choice for ploting
-range_start = '20070101'
+range_start = '2007-01-01'
 today = datetime.datetime.now() # Note AWS use UTC!
-range_end = today + timedelta(days = 7) 
-range_end = range_end.strftime('%Y%m%d') 
+range_end = today + timedelta(days = 5) 
+range_end = range_end.strftime('%Y-%m-%d') 
 
-# today = today.strftime('%Y%m%d') 
+# today = today.strftime('%Y-%m-%d')
 # range_end = today
 
 # Choices for plot at launching: 1. All traces on, 2. All traces off
