@@ -70,6 +70,7 @@ with open('/home/ubuntu/PCI-Personnel/config/directory.json', 'r') as f:
     directory = json.load(f)
 
 namelist_path = directory["namelist_path"]
+namelist_eng_path = directory["namelist_eng_path"]
 s3_bucket = directory["s3_bucket"]
 article_date_s3_key = directory["articles_date_s3_key"]
 article_local_folder = directory["articles_records_local_folder"]
@@ -80,6 +81,7 @@ LLM_result_local_path = directory["LLM_result_local_path"]
 
 # Load the name list and last modified date for articles and LLM analysis
 name_list = load_namelist(namelist_path)
+name_list_eng = load_namelist(namelist_eng_path)
 article_monitor = latest_date(s3_bucket, article_date_s3_key)
 LLM_monitor = latest_date(s3_bucket, LLM_date_s3_key.format(LLM_model = LLM_model))
 
@@ -89,6 +91,7 @@ def LLM_compile(n):
     for person_id in range(1,len(name_list)):
 
         person = name_list[person_id]
+        person_eng = name_list_eng[person_id]
         articles_path = f'{article_local_folder}/{person}-articles.csv'
         
         LLM_result_local_path = directory["LLM_result_local_path"].format(LLM_model = LLM_model, person = person)
@@ -98,7 +101,7 @@ def LLM_compile(n):
 
         # Start LLM analysis only if the status is ready!
         if status =='ready':
-            print(f'LLM analysis on articles will be performed for {person} with published date after {LLM_latest_date}')
+            print(f'LLM analysis on articles will be performed for {person_eng} with published date after {LLM_latest_date}')
 
             # Prepare data set from articles, keep_random_rows = None means keeping all rows
             dataset = data_preprocessing(articles_path, LLM_latest_date, keep_only_columns = ["title", "body", "published", "source", "url"], keep_random_rows = None)

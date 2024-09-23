@@ -3,19 +3,20 @@ import datetime
 import json
 import os
 from utils import load_namelist
+from datetime import timedelta
 
 # For plotting offline, use plotly directly:
 import plotly as py 
 import plotly.express as px
 
 # Prepare the data for plot and obtain the plot
-def plot(name_list, name_list_eng, plot_data, choice, output_path):
+def plot(name_list, name_list_eng, plot_data, range_start, range_end, choice, output_path):
 
     # plot_data['date'] = plot_data['date'].apply(lambda x: pd.to_datetime(x, format='%Y%m%d'))
     legend_names = {f'{name_list_eng[key]}': f'{name_list_eng[key]} ({name_list[key]})' for key in list(name_list.keys())}
 
     # plotly express line chart
-    fig = px.line(plot_data, x="date", y=plot_data.columns, color_discrete_sequence=px.colors.qualitative.Alphabet)
+    fig = px.line(plot_data, x="date", y=plot_data.columns, range_x=[range_start,range_end], color_discrete_sequence=px.colors.qualitative.Alphabet)
 
     fig.for_each_trace(lambda t: t.update(name = legend_names[t.name],
                                         legendgroup = legend_names[t.name],
@@ -90,8 +91,11 @@ if len(name_list) != len(name_list_eng):
 # Specify the range and choice for ploting
 range_start = '20070101'
 today = datetime.datetime.now() # Note AWS use UTC!
-today = today.strftime('%Y%m%d') 
-range_end = today
+range_end = today + timedelta(days = 7) 
+range_end = range_end.strftime('%Y%m%d') 
+
+# today = today.strftime('%Y%m%d') 
+# range_end = today
 
 # Choices for plot at launching: 1. All traces on, 2. All traces off
 choice = 1
@@ -104,4 +108,4 @@ if not os.path.exists(plot_data):
 
 else:
     plot_data = pd.read_csv(plot_data)
-    plot(name_list, name_list_eng, plot_data, choice, output_path)
+    plot(name_list, name_list_eng, plot_data, range_start, range_end, choice, output_path)
