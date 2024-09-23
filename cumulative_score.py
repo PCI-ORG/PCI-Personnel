@@ -104,6 +104,7 @@ decay_factor = 0.99
 for person_id in range(1,len(name_list)):
 
     person = name_list[person_id]
+    person_eng = name_list_eng[person_id]
 
     dataset = directory["LLM_result_local_path"].format(LLM_model = LLM_model, person = person)
     df_person = data_selection(dataset, keep_columns = ["title", "rating_1", "published", "url"])
@@ -114,6 +115,8 @@ for person_id in range(1,len(name_list)):
 
     s3_key = directory["score_s3_key"].format(LLM_model = LLM_model, person = person)
     s3.upload_file(output_path, s3_bucket, s3_key)
+
+    print(f"Index calculation finished for {person_eng}")
 
 # Output csv file for the resulting indices of different people
 
