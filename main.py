@@ -4,4 +4,4 @@ import article_query
 import LLM_analysis
 import cumulative_score
 import graph_score
-# import git_update
+import git_update
