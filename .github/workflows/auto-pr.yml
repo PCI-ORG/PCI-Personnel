@@ -1,0 +1,28 @@
+name: Auto Pull Request with Reviewer
+
+on:
+  push:
+    branches:
+      - staging  # Trigger when changes are pushed to the 'develop' branch
+
+jobs:
+  create-pull-request:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: staging # Only checkout the staging branch
+          fetch-depth: 0
+
+      # Step 2: Create the Pull Request
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          base: staging           # The branch from where the changes are coming    
+          branch: ver1            # Target branch where the pull request will go
+          title: "Automated Pull Request from staging"
+          body: "This pull request is created automatically from GitHub Actions."
+          reviewers: towashington  # Assign reviewers (can add multiple usernames separated by commas)
