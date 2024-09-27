@@ -1,28 +1,30 @@
-name: Auto Pull Request with Reviewer
-
+name: Automatic create PR
 on:
-  push:
+  push: # The triggering action is PUSH
     branches:
-      - staging  # Trigger when changes are pushed to the 'develop' branch
-
+      - staging # The branch where the push is
 jobs:
-  create-pull-request:
-    runs-on: ubuntu-latest
-
+  reatePullRequest:
+    runs-on: ubuntu-latest # Do not change this
     steps:
-      # Step 1: Checkout the repository
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
-          ref: staging # Only checkout the staging branch
-          fetch-depth: 0
-
-      # Step 2: Create the Pull Request
+          ref: ver1 # The branch where the PR wants to merge into
+      - name: Get latest changes
+        run: |
+          git fetch origin staging:staging
+          git reset --hard staging
       - name: Create Pull Request
+        id: cpr
         uses: peter-evans/create-pull-request@v7
         with:
-          base: staging           # The branch from where the changes are coming    
-          branch: ver1            # Target branch where the pull request will go
-          title: "Automated Pull Request from staging"
-          body: "This pull request is created automatically from GitHub Actions."
-          reviewers: towashington  # Assign reviewers (can add multiple usernames separated by commas)
+          commit-message: Update ver1 as trial
+          committer: GitHub <noreply@github.com>
+          author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
+          signoff: false
+          branch: staging
+          title: 'Updating branch ver1 as trial'
+          labels: |
+            update
+          reviewers: towashington
+          draft: false
