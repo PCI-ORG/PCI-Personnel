@@ -9,7 +9,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ver1 # The branch where the PR wants to merge into
+          ref: main # The branch where the PR wants to merge into
       - name: Get latest changes
         run: |
           git fetch origin staging:staging
@@ -18,12 +18,12 @@ jobs:
         id: cpr
         uses: peter-evans/create-pull-request@v7
         with:
-          commit-message: Update ver1 as trial
+          commit-message: Regular update
           committer: GitHub <noreply@github.com>
           author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
           signoff: false
           branch: staging
-          title: 'Updating branch ver1 as trial'
+          title: 'Regular update'
           labels: |
             update
           reviewers: towashington
