@@ -1,0 +1,30 @@
+name: Automatic create PR
+on:
+  push: # The triggering action is PUSH
+    branches:
+      - staging # The branch where the push is
+jobs:
+  reatePullRequest:
+    runs-on: ubuntu-latest # Do not change this
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main # The branch where the PR wants to merge into
+      - name: Get latest changes
+        run: |
+          git fetch origin staging:staging
+          git reset --hard staging
+      - name: Create Pull Request
+        id: cpr
+        uses: peter-evans/create-pull-request@v7
+        with:
+          commit-message: Regular update
+          committer: GitHub <noreply@github.com>
+          author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
+          signoff: false
+          branch: staging
+          title: 'Regular update'
+          labels: |
+            update
+          reviewers: towashington
+          draft: false
