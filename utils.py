@@ -54,6 +54,24 @@ def LLM_action(article_datelist, LLM_datelist, date_default, today, person, arti
 
     if len(item) == 0:
         LLM_latest_date = date_default
+
+        if not os.path.exists(articles_path):
+            status = 1
+            print(f"No articles found for {person}")
+            print(f"Need to download articles for {person} before LLM analysis")
+        
+        else:
+            download_date = article_datelist[article_datelist['name']==person]
+            index = download_date.index[0]
+            download_date = download_date['latest_date'][index]
+
+            if str(download_date) != today:
+                status = 2
+                print(f"Articles downloaded for {person} are not up-to-date")
+            
+            else:
+                status = 'new'
+
     
     elif len(item) == 1:
         index = item.index[0]
