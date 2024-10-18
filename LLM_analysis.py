@@ -100,7 +100,7 @@ def LLM_compile(n):
         status, LLM_latest_date = LLM_action(article_monitor, LLM_monitor, 20010101, today, person, articles_path)
 
         # Start LLM analysis only if the status is ready!
-        if status =='ready':
+        if (status =='ready') or (status =='new'):
             print(f'LLM analysis on articles will be performed for {person_eng} with published date after {LLM_latest_date}')
 
             # Prepare data set from articles, keep_random_rows = None means keeping all rows
